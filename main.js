@@ -75,9 +75,16 @@ box.addEventListener('touchend', e => {
 
 // Films: short muted preview loops while on screen, full film on click
 function startPreview(v) {
+  // Safari only allows these to play on their own when muted is set in code, not just in the HTML
+  v.muted = true;
+  v.playsInline = true;
   if (!v.src) v.src = v.dataset.src;
-  v.play().then(() => v.classList.add('playing')).catch(() => {});
+  const p = v.play();
+  if (p) p.catch(() => {});
 }
+document.querySelectorAll('.film-media video').forEach(v => {
+  v.addEventListener('playing', () => v.classList.add('playing'));
+});
 function stopPreview(v) {
   v.pause();
   v.classList.remove('playing');
@@ -110,6 +117,17 @@ films.forEach(media => {
     openBox(v, media.dataset.title);
   });
 });
+
+// On bigger screens, load the short previews in the background so hover starts instantly
+if (matchMedia('(min-width: 800px)').matches) {
+  window.addEventListener('load', () => {
+    films.forEach(m => {
+      const v = m.querySelector('video');
+      v.preload = 'auto';
+      if (!v.src) v.src = v.dataset.src;
+    });
+  });
+}
 
 // Stop a preview once its film scrolls off screen
 const offscreen = new IntersectionObserver(entries => {
