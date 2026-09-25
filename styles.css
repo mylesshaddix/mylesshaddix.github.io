@@ -92,8 +92,11 @@ button { font: inherit; color: inherit; }
   object-fit: cover;
   transition: transform 1.2s var(--ease), opacity .25s;
 }
-.film-media video { opacity: 0; }
-.film-media video.playing { opacity: 1; }
+/* The preview sits under the thumbnail, which fades away once the preview is actually playing.
+   Keeping the video itself visible is what lets Safari play it. */
+.film-media video { z-index: 0; }
+.film-media img { z-index: 1; }
+.film-media.is-playing img { opacity: 0; }
 .film-media:hover img, .film-media:hover video { transform: scale(1.02); }
 .film-meta {
   display: flex;

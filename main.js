@@ -75,20 +75,25 @@ box.addEventListener('touchend', e => {
 
 // Films: short muted preview loops while on screen, full film on click
 function startPreview(v) {
-  // Safari only allows these to play on their own when muted is set in code, not just in the HTML
+  // Safari and iOS only play a video on their own when it is muted in code, not just in the HTML
   v.muted = true;
+  v.defaultMuted = true;
   v.playsInline = true;
-  if (!v.src) v.src = v.dataset.src;
+  v.setAttribute('muted', '');
+  v.setAttribute('playsinline', '');
+  if (!v.src) { v.src = v.dataset.src; v.load(); }
   const p = v.play();
   if (p) p.catch(() => {});
 }
-document.querySelectorAll('.film-media video').forEach(v => {
-  v.addEventListener('playing', () => v.classList.add('playing'));
-});
 function stopPreview(v) {
   v.pause();
-  v.classList.remove('playing');
+  v.closest('.film-media').classList.remove('is-playing');
+  // Start from the first second again next time
+  if (v.readyState > 0) v.currentTime = 0;
 }
+document.querySelectorAll('.film-media video').forEach(v => {
+  v.addEventListener('playing', () => v.closest('.film-media').classList.add('is-playing'));
+});
 const films = [...document.querySelectorAll('.film-media')];
 function previewOnly(media) {
   films.forEach(m => { if (m !== media) stopPreview(m.querySelector('video')); });
