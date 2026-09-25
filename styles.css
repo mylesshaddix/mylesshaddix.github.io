@@ -55,6 +55,7 @@ button { font: inherit; color: inherit; }
   line-height: 1;
   white-space: nowrap;
 }
+h1.brand { font-weight: 300; }
 .social { justify-self: end; display: block; transition: color .2s; }
 .social svg { width: 22px; height: 22px; display: block; }
 .social:hover { color: var(--muted); }
