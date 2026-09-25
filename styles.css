@@ -95,26 +95,6 @@ button { font: inherit; color: inherit; }
 .film-media video { opacity: 0; }
 .film-media video.playing { opacity: 1; }
 .film-media:hover img, .film-media:hover video { transform: scale(1.02); }
-.film-media .play {
-  position: absolute; left: 50%; top: 50%;
-  width: 72px; height: 72px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,.7);
-  background: rgba(0,0,0,.25);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: grid; place-items: center;
-  transition: background .3s, transform .3s var(--ease);
-}
-.film-media .play::after {
-  content: '';
-  border-style: solid;
-  border-width: 9px 0 9px 15px;
-  border-color: transparent transparent transparent #fff;
-  margin-left: 4px;
-}
-.film-media:hover .play { background: rgba(0,0,0,.5); transform: translate(-50%, -50%) scale(1.06); }
 .film-meta {
   display: flex;
   justify-content: space-between;
@@ -359,7 +339,6 @@ button { font: inherit; color: inherit; }
   .nav a { font-size: 16px; }
   .social { position: absolute; top: 14px; right: 0; padding: 6px; }
   .films { padding-top: 32px; gap: 52px; }
-  .film-media .play { width: 58px; height: 58px; }
   .film-meta { flex-direction: column; gap: 4px; padding-top: 12px; }
   .film-meta h2 { font-size: 24px; }
   .film-meta p { font-size: 12px; }

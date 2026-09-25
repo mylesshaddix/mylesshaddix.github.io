@@ -74,20 +74,28 @@ box.addEventListener('touchend', e => {
 });
 
 // Films: short muted preview loops while on screen, full film on click
-const canHover = matchMedia('(hover: hover)').matches;
-const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function startPreview(v) {
   if (!v.src) v.src = v.dataset.src;
   v.play().then(() => v.classList.add('playing')).catch(() => {});
 }
-function stopPreview(v) { v.pause(); }
+function stopPreview(v) {
+  v.pause();
+  v.classList.remove('playing');
+}
+const films = [...document.querySelectorAll('.film-media')];
+function previewOnly(media) {
+  films.forEach(m => { if (m !== media) stopPreview(m.querySelector('video')); });
+  startPreview(media.querySelector('video'));
+}
 
-document.querySelectorAll('.film-media').forEach(media => {
+films.forEach(media => {
   const preview = media.querySelector('video');
-  if (canHover) {
-    media.addEventListener('mouseenter', () => startPreview(preview));
-    media.addEventListener('mouseleave', () => stopPreview(preview));
-  }
+  // Computer: preview while the cursor is over the film
+  media.addEventListener('mouseenter', () => startPreview(preview));
+  media.addEventListener('mouseleave', () => stopPreview(preview));
+  // Phone: touching or swiping across a film plays its preview, a tap opens the full film
+  media.addEventListener('touchstart', () => previewOnly(media), { passive: true });
+
   media.addEventListener('click', () => {
     stopPreview(preview);
     const v = document.createElement('video');
@@ -103,16 +111,11 @@ document.querySelectorAll('.film-media').forEach(media => {
   });
 });
 
-// On touch screens there is no hover, so play previews when a film is mostly on screen
-if (!canHover && !reduceMotion) {
-  const watcher = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      const v = e.target.querySelector('video');
-      if (e.isIntersecting) startPreview(v); else stopPreview(v);
-    });
-  }, { threshold: 0.6 });
-  document.querySelectorAll('.film-media').forEach(m => watcher.observe(m));
-}
+// Stop a preview once its film scrolls off screen
+const offscreen = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (!e.isIntersecting) stopPreview(e.target.querySelector('video')); });
+});
+films.forEach(m => offscreen.observe(m));
 
 // Photos
 const photoImgs = [...document.querySelectorAll('.photos img')];
